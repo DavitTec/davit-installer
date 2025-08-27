@@ -6,7 +6,7 @@
 
 [remote.github] 
 owner = "DavitTec"
-repo = "list-helpme-aliases"
+repo = "davit-installer"
 token = "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"  # Add your GitHub Personal Access Token here for authentication
 # ref: https://toml.io/en/v1.0.0
 
@@ -56,7 +56,7 @@ postprocessors = [
     { pattern = '<REPO>', replace = "<GITHUB_URL>/<GITHUB_USER>/<GITHUB_REPO>" },
     { pattern = '<GITHUB_URL>', replace = "https://github.com" },
     { pattern = '<GITHUB_USER>', replace = "DavitTec" },
-    { pattern = '<GITHUB_REPO>', replace = "list-helpme-aliases" },
+    { pattern = '<GITHUB_REPO>', replace = "davit-installer" },
 
 ]
 
