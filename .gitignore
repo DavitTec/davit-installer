@@ -6,4 +6,4 @@ tmp/*
 archived/*
 *.log
 .env-local
-
+.env
