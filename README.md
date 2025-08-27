@@ -6,6 +6,8 @@ Advanced INSTALL script for DavitTec projects. Simple version in project roots; 
 
 Handles project setup, env creation, manifest updates, aliases, and integration with helpers like cat2md, logger.
 
+Version: 0.0.1
+
 ## Installation
 
 Run `./INSTALL` or global `/opt/davit/bin/INSTALL --project <name>`.
@@ -25,8 +27,5 @@ See [docs/todo.md](docs/todo.md)
 
 ## References
 
-
-
-Cheatsheets
-
-- [Cheatsheets for davit-installer](docs/cheatsheets.md)
+- Cheatsheets
+  - [Cheatsheets for davit-installer](docs/cheatsheets.md)
