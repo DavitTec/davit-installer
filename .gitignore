@@ -1,0 +1,9 @@
+
+# DavitTec Standard .gitignore
+node_modules/
+logs/*
+tmp/*
+archived/*
+*.log
+.env-local
+
