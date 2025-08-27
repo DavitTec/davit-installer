@@ -7,13 +7,18 @@ All notable changes to the [davit-installer](https://github.com/DavitTec/davit-i
 - GitHub: [https://github.com/DavitTec/davit-installer](https://github.com/DavitTec/davit-installer),
 
 ---
-## [unreleased]
+## [0.0.1] - 2025-08-27 ([v0.0.1](https://github.com/DavitTec/davit-installer/releases/tag/v0.0.1))
 
 ### 🐛 Bug Fixes
 
 - Gitignore to incl privacy (fb60332…)
 
 - Updated cliff.toml to this project (b00e802…)
+
+
+### 📚 Documentation
+
+- Update (d74c35b…)
 
 
 ### 🚀 Features
