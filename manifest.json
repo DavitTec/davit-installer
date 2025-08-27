@@ -1,0 +1,20 @@
+[
+  {
+    "alias": "Generic",
+    "description": "script",
+    "srcName": "create-env.sh",
+    "version": "to create or update .env from .env-example for DavitTec projects 0.0.1",
+    "installed": "installed",
+    "remote_version": "to create or update .env from .env-example for DavitTec projects 0.0.1",
+    "repo_path": "scripts/create-env.sh"
+  },
+  {
+    "alias": "Generic",
+    "description": "script",
+    "srcName": "create-manifest.sh",
+    "version": "to create or update manifest.json for DavitTec projects 0.0.1",
+    "installed": "installed",
+    "remote_version": "to create or update manifest.json for DavitTec projects 0.0.1",
+    "repo_path": "scripts/create-manifest.sh"
+  }
+]
