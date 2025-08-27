@@ -1,0 +1,17 @@
+{
+  "editor.formatOnSave": true,
+  "prettier.enable": true,
+  "eslint.enable": true,
+  "eslint.validate": [
+    "javascript",
+    "typescript"
+  ],
+  "shellcheck.enable": true,
+  "shellcheck.useWorkspaceRootAsCwd": true,
+  "gitlens.hovers.currentLine.over": "line",
+  "commitizen.path": "cz-conventional-changelog",
+  "debug.node.autoAttach": "on",
+  "tasks.runners": [
+    "pnpm run parallel"
+  ]
+}
