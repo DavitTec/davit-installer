@@ -8,3 +8,4 @@ archived/*
 .env-local
 .env
 docs/hist/*
+archives/*
