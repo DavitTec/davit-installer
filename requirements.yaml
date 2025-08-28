@@ -8,6 +8,7 @@ extensions:
   - knisterpeter.vscode-commitizen
   - mhutchie.git-graph
   - rogalmic.bash-debug
+  -gruntfuggly.todo-tree
 settings:
   editor.formatOnSave: true
   prettier.enable: true
