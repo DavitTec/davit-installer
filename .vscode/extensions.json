@@ -8,6 +8,7 @@
     "eamodio.gitlens",
     "knisterpeter.vscode-commitizen",
     "mhutchie.git-graph",
-    "rogalmic.bash-debug"
+    "rogalmic.bash-debug",
+    "gruntfuggly.todo-tree"
   ]
 }
