@@ -17,7 +17,7 @@ fi
 #TODO: Check that ENV_FILE exists and its Version is set above 0.1.1
 #TODO: Consider using 'set -a' to export all variables after sourcing .env
 #TODO: Validate required variables are set after sourcing .env
-
+#Fixme: Not formating the manifest.json corectly. 
 
 if [[ -f "$ENV_FILE" ]]; then
     while IFS='=' read -r key value; do
@@ -46,6 +46,44 @@ log() {
     shift
     mkdir -p "$LOG_DIR"
     echo "$(date '+%Y-%m-%d %H:%M:%S') [$level] $*" >> "$LOG_FILE"
+}
+
+# Function to validate script file headers meet standards
+validate_script_headers() {
+    local file="$1"
+    local valid=true
+    local version_regex='^#[\ ]*Version:[\ ]*[0-9]+\.[0-9]+\.[0-9]+$'
+    local description_regex='^#[\ ]*Description:[\ ]*.+$'
+    local alias_regex='^#[\ ]*Alias:[\ ]*.+$'
+
+    while IFS= read -r line; do
+        line=$(echo "$line" | sed 's/^\s*//;s/\s*$//')
+        if [[ "$line" =~ ^# ]]; then
+            if [[ "$line" =~ $version_regex ]]; then
+                version_found=true
+            elif [[ "$line" =~ $description_regex ]]; then
+                description_found=true
+            elif [[ "$line" =~ $alias_regex ]]; then
+                alias_found=true
+            fi
+        fi
+    done < "$file"
+    if [[ "$version_found" != true ]]; then
+        echo -e "${RED}Error:${RESET} Missing or invalid Version header in $file"
+        # add "#TODO:[script_name] Add version in header" to log and to script footer.
+        valid=false
+    fi
+    if [[ "$description_found" != true ]]; then
+        echo -e "${RED}Error:${RESET} Missing or invalid Description header in $file"
+        # add "#TODO:[script_name] Add description in header" to log and to script footer.
+        valid=false
+    fi
+    if [[ "$alias_found" != true ]]; then
+        echo -e "${RED}Error:${RESET} Missing or invalid Alias header in $file"
+        # add "#TODO:[script_name] Add alias in header" to log and to script footer.
+        valid=false
+    fi
+    $valid && return 0 || return 1
 }
 
 # Extract metadata from script file
@@ -170,6 +208,8 @@ main() {
     fi
 
     if [[ "$create" == "true" || "$update" == "true" ]]; then
+        # validate_script_headers in "$SCRIPTS_DIR" loop all scripts
+        # validate_script_registry for alias conflicts
         create_or_update_manifest "$update"
     fi
 

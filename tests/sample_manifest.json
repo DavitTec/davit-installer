@@ -1,0 +1,11 @@
+[
+  {
+    "alias": "install+",
+    "description": "Advanced installer for DavitTec projects",
+    "srcName": "INSTALL",
+    "version": "0.0.3",
+    "installed": "installed",
+    "remote_version": "0.0.3",
+    "repo_path": "scripts/INSTALL"
+  }
+]
