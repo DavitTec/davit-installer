@@ -7,6 +7,29 @@ All notable changes to the [davit-installer](https://github.com/DavitTec/davit-i
 - GitHub: [https://github.com/DavitTec/davit-installer](https://github.com/DavitTec/davit-installer),
 
 ---
+## [unreleased]
+
+### ⚙️ Miscellaneous Tasks
+
+- Testing add FIXME: bug report  "create-env.sh" (822e952…)
+
+
+### 🐛 Bug Fixes
+
+- Update gitignore (fe1711a…)
+
+
+### 📚 Documentation
+
+- Update README.md (d834638…)
+
+- Update changelog (295d774…)
+
+
+### 🚀 Features
+
+- Update requirements with TODO ext (650dc49…)
+
 ## [0.0.1] - 2025-08-27 ([v0.0.1](https://github.com/DavitTec/davit-installer/releases/tag/v0.0.1))
 
 ### 🐛 Bug Fixes
