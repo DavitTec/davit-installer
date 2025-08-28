@@ -48,6 +48,7 @@ create_env() {
     while IFS='=' read -r key value; do
         if [[ -n "$key" && ! "$key" =~ ^# ]]; then
             value=$(echo "$value" | sed 's/^"\|"$//g')
+            #FIXME: line 51: unexpected EOF while looking for matching `"'
             eval "${key}=${value}"
         fi
     done < <(grep -v '^#' "$ENV_EXAMPLE_FILE" | grep -v '^$')
