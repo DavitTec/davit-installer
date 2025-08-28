@@ -1,11 +1,22 @@
 [
   {
-    "alias": "install+",
-    "description": "Advanced installer for DavitTec projects",
-    "srcName": "INSTALL",
-    "version": "0.0.3",
+    "project": "davit-installer",
+    "alias": "Generic",
+    "description": "Generic script to create or update manifest.json for DavitTec projects. Extracts metadata from script comments.",
+    "srcName": "create-manifest.sh",
+    "version": "0.0.1",
     "installed": "installed",
-    "remote_version": "0.0.3",
-    "repo_path": "scripts/INSTALL"
+    "remote_version": "0.0.1",
+    "repo_path": "davit-installer/scripts/create-manifest.sh"
+  },
+  {
+    "project": "davit-installer",
+    "alias": "Generic",
+    "description": "Create or update .env from .env-example for DavitTec projects.",
+    "srcName": "create-env.sh",
+    "version": "0.0.1",
+    "installed": "installed",
+    "remote_version": "0.0.1",
+    "repo_path": "davit-installer/scripts/create-env.sh"
   }
 ]
