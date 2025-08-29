@@ -36,3 +36,29 @@ validation_rules:
   version: "^[0-9]+\\.[0-9]+\\.[0-9]+$"
   description_min_length: 10
   boolean_values: ["true", "false"]
+  DOMAIN:
+    type: string
+    min_length: 3
+    required: true
+  HOST:
+    type: string
+    min_length: 4
+    required: true
+  PROJECT_NAME:
+    type: string
+    min_length: 5
+    required: true
+  VERSION:
+    type: semver
+    required: true
+  REQUIREMENTS:
+    type: boolean
+    required: true
+  GIT_ENABLED:
+    type: boolean
+    required: true
+  SYNC_LEVEL:
+    type: enum
+    values: [patch, minor, major]
+    required: true
+  # Add more keys as needed (e.g., env_version: type: semver, required: true)
