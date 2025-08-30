@@ -16,10 +16,24 @@ All notable changes to the [davit-installer](https://github.com/DavitTec/davit-i
 
 ### 🐛 Bug Fixes
 
+- Imporved check-env.sh v0.0.3 (2c61d2c…)
+
+- Requirements.yaml with updated validation rules (07f089a…)
+
+- Update requirements validation rules (17c4439…)
+
+- Vscode stub header/footer (85c2767…)
+
+- Update .env-example to include SYNC (84727bc…)
+
 - Update gitignore (fe1711a…)
 
 
 ### 📚 Documentation
+
+- Updated README (880ea14…)
+
+- Update changelog (66a025f…)
 
 - Update README.md (d834638…)
 
@@ -28,7 +42,18 @@ All notable changes to the [davit-installer](https://github.com/DavitTec/davit-i
 
 ### 🚀 Features
 
+- Updated debuging scripts and launch.json (0578d6f…)
+
+- Added todo ext to vscode (5ac5dd8…)
+
 - Update requirements with TODO ext (650dc49…)
+
+
+### 🧪 Testing
+
+- Updated test/test-install.sh 0.0.3 (66333b0…)
+
+- Added updated sample manifest (d2c6254…)
 
 ## [0.0.1] - 2025-08-27 ([v0.0.1](https://github.com/DavitTec/davit-installer/releases/tag/v0.0.1))
 

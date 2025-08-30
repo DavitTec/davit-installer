@@ -2,7 +2,7 @@
 
 ## Overview
 
-`davit-installer` is a production-ready installer for DAVIT projects, adding `INSTALL` commands to projects or running via alias `install+` from `/opt/davit/bin`. It manages environment setup, manifest generation, and validation, ensuring consistency across projects under `/opt/davit/development`. Version 0.0.4 focuses on stabilizing .env handling with strict naming and validation rules.
+`davit-installer` is a production-ready installer for DAVIT projects, adding `INSTALL` commands to projects or running via alias `install+` from `/opt/davit/bin`. It manages environment setup, manifest generation, and validation, ensuring consistency across projects under `/opt/davit/development`. Version 0.0.6 stabilizes .env handling with strict naming and color output fixes.
 
 - **Version**: 0.0.6 (bump patches per commit; use `./scripts/create-manifest.sh --bump patch`)
 - **Branch**: patch/v0.0.2-fixes (merge to main after stabilization)
@@ -82,6 +82,15 @@ sha256sum requirements.yaml > .vscode/requirements.sha256
   - Values: Prefer expressions for dynamic (e.g., PROJECT_NAME="$(basename "$PWD")")—evaluates when sourced in Bash, but literal in non-Bash (e.g., Docker).
   - Required keys fail validation if missing/invalid; optional warn with defaults.
   - Min keys threshold: Warn if <5 (adjust in check-env.sh).
+
+  **Required .env Keys** (uppercase, underscores only):
+
+  - `ENV_VERSION`: "0001" (version code).
+  - `DOMAIN`: Min 3 chars (e.g., "davit").
+  - `HOST`: Min 4 chars (e.g., "node").
+  - `PROJECT_NAME`: Min 5 chars (matches folder).
+  - `VERSION`: Semantic (X.Y.Z, e.g., "0.0.6").
+  - `SYNC_LEVEL`: Enum (patch/minor/major).
 
 - **.env-standard** (in /opt/davit/development): Global template with expressions.
 - **requirements.yaml**: Defines validation_rules for required/optional keys, types, min_length, regex, defaults.
