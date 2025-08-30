@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # check-env.sh
-# Version: 0.0.7
+# Version: 0.0.8
 # Description: Modular .env validator comparing target to standard, with per-key tests and logging.
 # Alias: chkenv, checkenv
 
@@ -16,6 +16,7 @@ RESET="\033[0m"
 LOG_FILE="logs/check-env.log"
 MIN_KEYS_THRESHOLD=5
 USE_COLORS=true
+ENV_VERSION="0001"
 
 # Check if colors should be used
 if [[ ! -t 1 || $(tput colors 2>/dev/null || echo 0) -eq 0 ]]; then
@@ -45,6 +46,12 @@ check_yq() {
         print_message "Error: yq required for $REQUIREMENTS_YAML. Install: sudo VERSION=v4.47.1 BINARY=yq_linux_amd64; wget https://github.com/mikefarah/yq/releases/download/\${VERSION}/\${BINARY}.tar.gz -O - | tar xz && mv \${BINARY} /usr/local/bin/yq" "$RED"
         return 1
     fi
+    if [[ -f "$REQUIREMENTS_YAML" ]]; then
+        yq e . "$REQUIREMENTS_YAML" >/dev/null 2>&1 || {
+            print_message "Warning: $REQUIREMENTS_YAML is malformed. Falling back to dummy rules." "$YELLOW"
+            return 1
+        }
+    fi
     return 0
 }
 
@@ -66,6 +73,8 @@ load_env_file() {
         line="${line%"${line##*[![:space:]]}"}"
         if [[ -z "$line" || "$line" =~ ^# ]]; then continue; fi
 
+        # Handle quoted values with command substitutions
+        #TODO: Improve handling of complex cases if line contains dynamic content
         if [[ "$line" =~ ^([a-zA-Z_][a-zA-Z0-9_]*)\s*=\s*(\"[^\"]*\"|\'[^\']*\'|[^[:space:]#]*)([[:space:]]*#.*)?$ ]]; then
             local key="${BASH_REMATCH[1]}"
             local value="${BASH_REMATCH[2]}"
@@ -191,9 +200,9 @@ test_key() {
                     message+="Value too short (min $min_length). "
                 fi
                 if [[ -n "$regex" ]]; then
-                    if ! echo "$tgt_value" | grep -qE "$regex"; then
+                    if ! echo "$tgt_value" | grep -qE -- "$regex"; then
                         result="FAIL"
-                        message+="Invalid format (must match $regex). "
+                        message+="Invalid format (must match '$regex'). "
                     fi
                 fi
                 ;;
