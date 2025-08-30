@@ -9,6 +9,7 @@ extensions:
   - mhutchie.git-graph
   - rogalmic.bash-debug
   - gruntfuggly.todo-tree
+  - davidanson.vscode-markdownlint
 settings:
   editors.formatOnSave: true
   prettier.enable: true
