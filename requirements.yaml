@@ -32,44 +32,201 @@ launch:
 dependencies:
   - jq
   - git
+  - yq # Added for parsing validation_rules
 validation_rules:
+  ENV_VERSION:
+    required: true
+    type: string
+    regex: "^[0-9]{4}$"
+    error_code: E000
+    help_comment: Environment version code (e.g., 0001)
   DOMAIN:
     required: true
     type: string
     min_length: 3
     error_code: E001
-    help_comment: "Project domain (e.g., 'davit')"
+    help_comment: Project domain (e.g., davit)
   HOST:
     required: true
     type: string
     min_length: 4
     error_code: E002
-    help_comment: "Server hostname (e.g., 'node')"
+    help_comment: Server hostname (e.g., node)
+  AUTHOR:
+    required: false
+    type: string
+    min_length: 1
+    error_code: E005
+    help_comment: Project author (e.g., $USER)
   PROJECT_NAME:
     required: true
     type: string
     min_length: 5
     error_code: E003
-    help_comment: "Project name (must match folder)"
+    help_comment: Project name (must match folder)
   VERSION:
     required: true
     type: semver
     error_code: E004
-    help_comment: "Semantic version (X.Y.Z)"
-  REQUIREMENTS:
+    help_comment: Semantic version (X.Y.Z)
+  CREATED:
     required: false
-    type: boolean
-    error_code: E012
-    help_comment: "Check requirements (true/false, optional default true)"
-  GIT_ENABLED:
+    type: timestamp
+    regex: "^[0-9]{8}-[0-9]{2}:[0-9]{2}$"
+    error_code: E006
+    help_comment: Creation timestamp (YYYYMMDD-HH:MM)
+  LAST_VISITED:
     required: false
-    type: boolean
-    error_code: E013
-    help_comment: "Enable Git (true/false, optional default false)"
+    type: timestamp
+    regex: "^[0-9]{4}-[0-9]{2}-[0-9]{2} [0-9]{2}:[0-9]{2}:[0-9]{2}$"
+    error_code: E007
+    help_comment: Last access timestamp (YYYY-MM-DD HH:MM:SS)
   SYNC_LEVEL:
     required: true
     type: enum
     values: ["patch", "minor", "major"]
-    error_code: E007
-    help_comment: "Sync level"
+    error_code: E008
+    help_comment: Sync level
+  DIR_NAME:
+    required: false
+    type: string
+    min_length: 5
+    error_code: E009
+    help_comment: Directory name (alias for PROJECT_NAME)
+  OPT_DIR:
+    required: false
+    type: path
+    error_code: E010
+    help_comment: Base opt directory (e.g., /opt/davit)
+  BIN_DIR:
+    required: false
+    type: path
+    error_code: E011
+    help_comment: Bin directory
+  DEV_DIR:
+    required: false
+    type: path
+    error_code: E012
+    help_comment: Development directory
+  ROOT_DIR:
+    required: false
+    type: path
+    error_code: E013
+    help_comment: Project root
+  ARCHIVES_DIR:
+    required: false
+    type: path
+    error_code: E014
+    help_comment: Archives directory
+  TEMP_DIR:
+    required: false
+    type: path
+    error_code: E015
+    help_comment: Temp directory
+  TEST_DIR:
+    required: false
+    type: path
+    error_code: E016
+    help_comment: Test directory
+  LOG_DIR:
+    required: false
+    type: path
+    error_code: E017
+    help_comment: Log directory
+  LOG_FILE:
+    required: false
+    type: path
+    error_code: E018
+    help_comment: Log file
+  REQUIREMENTS:
+    required: false
+    type: boolean
+    default: true
+    error_code: E019
+    help_comment: Check requirements (true/false, optional default true)
+  SERVER:
+    required: false
+    type: string
+    min_length: 4
+    error_code: E020
+    help_comment: Server name (alias for HOST)
+  GIT_ENABLED:
+    required: false
+    type: boolean
+    default: false
+    error_code: E021
+    help_comment: Enable Git (true/false, optional default false)
+  GIT_TYPE:
+    required: false
+    type: enum
+    values: ["github", "gitlab", "bitbucket"]
+    error_code: E022
+    help_comment: Git provider
+  GIT_USER:
+    required: false
+    type: string
+    min_length: 1
+    error_code: E023
+    help_comment: Git username (e.g., DavitTec)
+  GIT_IGNORE_TEMPLATE:
+    required: false
+    type: string
+    min_length: 1
+    error_code: E024
+    help_comment: Gitignore templates (e.g., node+shell+davit)
+  GIT_IGNORE_FILE:
+    required: false
+    type: string
+    min_length: 1
+    error_code: E025
+    help_comment: Gitignore file name (e.g., .gitignore)
+  GITHUB_USER:
+    required: false
+    type: string
+    min_length: 1
+    error_code: E026
+    help_comment: GitHub username
+  GITHUB_URL:
+    required: false
+    type: string
+    min_length: 1
+    error_code: E027
+    help_comment: GitHub repo URL
+  GITHUB_TOKEN:
+    required: false
+    type: string
+    regex: "^ghp_[a-zA-Z0-9]{36}$|^$"
+    error_code: E028
+    help_comment: GitHub access token (or empty)
+  DIFF_TOOL:
+    required: false
+    type: string
+    min_length: 1
+    error_code: E029
+    help_comment: Diff tool (e.g., diff)
+  VISUAL_DIFF:
+    required: false
+    type: string
+    min_length: 1
+    error_code: E030
+    help_comment: Visual diff tool (e.g., meld)
+  EXCLUDE_PATTERNS:
+    required: false
+    type: string
+    min_length: 1
+    error_code: E031
+    help_comment: Exclude patterns for utils
+  EXCLUDE_EXTENSIONS:
+    required: false
+    type: string
+    min_length: 1
+    error_code: E032
+    help_comment: Exclude file extensions
+  INCLUDE_EXTENSIONS:
+    required: false
+    type: string
+    min_length: 1
+    error_code: E033
+    help_comment: Include file extensions
+  # Add more keys as needed (e.g., DB_FILE, LOG_DIR, etc.)
   # Add more keys as needed (e.g., env_version: type: semver, required: true)

@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # check-env.sh
-# Version: 0.0.3
+# Version: 0.0.6
 # Description: Modular .env validator comparing target to standard, with per-key tests and logging.
 # Alias: chkenv, checkenv
 
@@ -8,27 +8,50 @@ set -euo pipefail
 
 # Globals
 STANDARD_ENV="/opt/davit/development/.env-standard"
-REQUIREMENTS_YAML="requirements.yaml"  # Renamed for clarity
+REQUIREMENTS_YAML="requirements.yaml"
 RED="\033[0;31m"
 GREEN="\033[0;32m"
 YELLOW="\033[1;33m"
 RESET="\033[0m"
-LOG_FILE="check-env.log"  # Relative to cwd
-MIN_KEYS_THRESHOLD=5  # Warn if fewer keys
+LOG_FILE="logs/check-env.log"
+MIN_KEYS_THRESHOLD=5
+USE_COLORS=true
 
-# Check for yq (optional, only if requirements.yaml exists)
-check_yq() {
-    if [[ -f "$REQUIREMENTS_YAML" ]] && ! command -v yq >/dev/null; then
-        echo "${RED}Error: yq required for parsing $REQUIREMENTS_YAML. Install via package manager (e.g., sudo apt install yq).${RESET}"
-        exit 1
+# Check if colors should be used
+if [[ ! -t 1 || $(tput colors 2>/dev/null || echo 0) -eq 0 ]]; then
+    USE_COLORS=false
+    RED=""
+    GREEN=""
+    YELLOW=""
+    RESET=""
+fi
+
+# Print with colors to terminal, plain to log
+print_message() {
+    local message="$1"
+    local color="$2"
+    if $USE_COLORS; then
+        printf "%b%s%b\n" "$color" "$message" "$RESET"
+    else
+        printf "%s\n" "$message"
     fi
+    echo "$message" >> "$LOG_FILE"
 }
 
-# Load env file into arrays (keys in order, assoc for values/comments)
+# Check for yq
+check_yq() {
+    if [[ -f "$REQUIREMENTS_YAML" ]] && ! command -v yq >/dev/null; then
+        print_message "Error: yq required for $REQUIREMENTS_YAML. Install: sudo VERSION=v4.47.1 BINARY=yq_linux_amd64; wget https://github.com/mikefarah/yq/releases/download/\${VERSION}/\${BINARY}.tar.gz -O - | tar xz && mv \${BINARY} /usr/local/bin/yq" "$RED"
+        return 1
+    fi
+    return 0
+}
+
+# Load env file into arrays
 load_env_file() {
     local file="$1"
     if [[ ! -f "$file" ]]; then
-        echo "${RED}Error: File $file not found.${RESET}"
+        print_message "Error: File $file not found." "$RED"
         return 1
     fi
 
@@ -38,21 +61,23 @@ load_env_file() {
     local line_num=0
     while IFS= read -r line || [[ -n "$line" ]]; do
         ((line_num++))
-        line="${line#"${line%%[![:space:]]*}"}"  # Trim leading
-        line="${line%"${line##*[![:space:]]}"}"  # Trim trailing
-        if [[ -z "$line" || "$line" =~ ^# ]]; then continue; fi  # Skip blank/comments
+        line="${line#"${line%%[![:space:]]*}"}"
+        line="${line%"${line##*[![:space:]]}"}"
+        if [[ -z "$line" || "$line" =~ ^# ]]; then continue; fi
 
-        # Parse KEY="value" # comment
         if [[ "$line" =~ ^([a-zA-Z_][a-zA-Z0-9_]*)\s*=\s*(\"[^\"]*\"|\'[^\']*\'|[^#]*)(.*)$ ]]; then
             local key="${BASH_REMATCH[1]}"
             local value="${BASH_REMATCH[2]}"
             local comment="${BASH_REMATCH[3]}"
 
-            # Strip outer quotes from value
+            # Validate key format (uppercase underscore only)
+            if [[ ! "$key" =~ ^[A-Z_][A-Z0-9_]*$ ]]; then
+                print_message "Warning: Invalid key format at line $line_num in $file: '$key'. Must be uppercase with underscores (e.g., PROJECT_NAME)." "$YELLOW"
+                continue
+            fi
+
             value="${value#\"}"; value="${value%\"}"
             value="${value#\'}"; value="${value%\'}"
-
-            # Trim comment (if starts with #)
             comment="${comment#"#"}"
             comment="${comment#"${comment%%[![:space:]]*}"}"
 
@@ -60,7 +85,7 @@ load_env_file() {
             loaded_values["$key"]="$value"
             loaded_comments["$key"]="$comment"
         else
-            echo "${YELLOW}Warning: Invalid line $line_num in $file: '$line'. Skipping.${RESET}"
+            print_message "Warning: Invalid line $line_num in $file: '$line'. Skipping." "$YELLOW"
         fi
     done < "$file"
     return 0
@@ -75,43 +100,47 @@ find_target_env() {
             return 0
         fi
     done
-    echo "${RED}FAIL: No target .env found (checked: ${possible_targets[*]}).${RESET}"
+    print_message "FAIL: No target .env found (checked: ${possible_targets[*]})." "$RED"
     exit 1
 }
 
-# Get validation rules per key (from requirements.yaml or dummy)
+# Get validation rules
 get_validation_rules() {
     local key="$1"
-    if [[ -f "$REQUIREMENTS_YAML" ]]; then
-        local required type min_length error_code help_comment
-        required=$(yq e ".validation_rules.$key.required // false" "$REQUIREMENTS_YAML")
-        type=$(yq e ".validation_rules.$key.type // 'string'" "$REQUIREMENTS_YAML")
-        min_length=$(yq e ".validation_rules.$key.min_length // 0" "$REQUIREMENTS_YAML")
-        error_code=$(yq e ".validation_rules.$key.error_code // 'E999'" "$REQUIREMENTS_YAML")
-        help_comment=$(yq e ".validation_rules.$key.help_comment // 'Unknown key'" "$REQUIREMENTS_YAML")
+    if [[ -f "$REQUIREMENTS_YAML" ]] && check_yq; then
+        local required type min_length error_code help_comment values regex default
+        required=$(yq e ".validation_rules.\"$key\".required // false" "$REQUIREMENTS_YAML" 2>/dev/null || echo "false")
+        type=$(yq e ".validation_rules.\"$key\".type // 'string'" "$REQUIREMENTS_YAML" 2>/dev/null || echo "string")
+        min_length=$(yq e ".validation_rules.\"$key\".min_length // 0" "$REQUIREMENTS_YAML" 2>/dev/null || echo "0")
+        error_code=$(yq e ".validation_rules.\"$key\".error_code // 'E999'" "$REQUIREMENTS_YAML" 2>/dev/null || echo "E999")
+        help_comment=$(yq e ".validation_rules.\"$key\".help_comment // 'Unknown key'" "$REQUIREMENTS_YAML" 2>/dev/null || echo "Unknown key")
+        regex=$(yq e ".validation_rules.\"$key\".regex // ''" "$REQUIREMENTS_YAML" 2>/dev/null || echo "")
+        default=$(yq e ".validation_rules.\"$key\".default // ''" "$REQUIREMENTS_YAML" 2>/dev/null || echo "")
         if [[ "$type" == "enum" ]]; then
-            local values
-            values=$(yq e ".validation_rules.$key.values | join(' ')" "$REQUIREMENTS_YAML")
-            echo "$required $type $values $min_length $error_code $help_comment"
+            values=$(yq e ".validation_rules.\"$key\".values | join(' ')" "$REQUIREMENTS_YAML" 2>/dev/null || echo "none")
         else
-            echo "$required $type none $min_length $error_code $help_comment"
+            values="none"
         fi
+        echo "$required $type $values $min_length $error_code $help_comment $regex $default"
     else
-        # Dummy rules until requirements.yaml updated
         case "$key" in
-            DOMAIN) echo "true string none 3 E001 Project domain (e.g., 'davit')";;
-            HOST) echo "true string none 4 E002 Server hostname (e.g., 'node')";;
-            PROJECT_NAME) echo "true string none 5 E003 Project name (must match folder)";;
-            VERSION) echo "true semver none 0 E004 Semantic version (X.Y.Z)";;
-            REQUIREMENTS) echo "false boolean none 0 E012 Check requirements (true/false, optional default true)";;
-            GIT_ENABLED) echo "false boolean none 0 E013 Enable Git (true/false, optional default false)";;
-            SYNC_LEVEL) echo "true enum patch minor major 0 E007 Sync level";;
-            *) echo "false string none 0 E999 Unknown key - consider if needed";;
+            ENV_VERSION) echo "true string none 0 E000 Environment version code (e.g., '0001') ^[0-9]{4}$ ''";;
+            DOMAIN) echo "true string none 3 E001 Project domain (e.g., davit) '' ''";;
+            HOST) echo "true string none 4 E002 Server hostname (e.g., node) '' ''";;
+            PROJECT_NAME) echo "true string none 5 E003 Project name (must match folder) '' ''";;
+            VERSION) echo "true semver none 0 E004 Semantic version (X.Y.Z) '' ''";;
+            REQUIREMENTS) echo "false boolean none 0 E012 Check requirements (true/false, optional default true) '' true";;
+            GIT_ENABLED) echo "false boolean none 0 E013 Enable Git (true/false, optional default false) '' false";;
+            SYNC_LEVEL) echo "true enum patch minor major 0 E007 Sync level '' ''";;
+            OPT_DIR) echo "false path none 0 E014 Base opt directory (e.g., /opt/davit) '' ''";;
+            BIN_DIR) echo "false path none 0 E015 Bin directory '' ''";;
+            GITHUB_TOKEN) echo "false string none 0 E010 GitHub access token (or empty) ^ghp_[a-zA-Z0-9]{36}$|^$ ''";;
+            *) echo "false string none 0 E999 Unknown key - consider if needed '' ''";;
         esac
     fi
 }
 
-# Test single key (compare target vs standard)
+# Test single key
 test_key() {
     local key="$1"
     local std_value="${loaded_values[$key]-}"
@@ -119,7 +148,7 @@ test_key() {
     local tgt_value="${target_values[$key]-}"
     local tgt_comment="${target_comments[$key]-}"
 
-    read -r required type values min_length error_code help_comment <<< "$(get_validation_rules "$key")"
+    read -r required type values min_length error_code help_comment regex default <<< "$(get_validation_rules "$key")"
 
     local result="PASS"
     local message="Key $key: "
@@ -132,7 +161,7 @@ test_key() {
             message+="Required - add with value like '$std_value' ($help_comment)."
         else
             result="WARN"
-            message+="Optional - defaults possible ($help_comment)."
+            message+="Optional - defaults to '$default' ($help_comment)."
         fi
     else
         # Value/type validation
@@ -141,6 +170,10 @@ test_key() {
                 if [[ ${#tgt_value} -lt $min_length ]]; then
                     result="FAIL"
                     message+="Value too short (min $min_length). "
+                fi
+                if [[ -n "$regex" && ! "$tgt_value" =~ $regex ]]; then
+                    result="FAIL"
+                    message+="Invalid format (must match $regex). "
                 fi
                 ;;
             semver)
@@ -170,9 +203,14 @@ test_key() {
                     message+="Invalid enum (${values}). "
                 fi
                 ;;
+            path)
+                if [[ -n "$tgt_value" && ! -e "$tgt_value" ]]; then
+                    result="FAIL"
+                    message+="Invalid path (does not exist). "
+                fi
+                ;;
         esac
 
-        # Compare value/comment if present
         if [[ "$tgt_value" != "$std_value" ]]; then
             message+="Value differs (standard: '$std_value'). "
         fi
@@ -191,31 +229,33 @@ log_result() {
     local color="${GREEN}"
     [[ "$result" == "FAIL" ]] && color="${RED}"
     [[ "$result" == "WARN" ]] && color="${YELLOW}"
-    echo "${color}$result - $message (Code: $error_code)${RESET}" | tee -a "$LOG_FILE"
+    print_message "$result - $message (Code: $error_code)" "$color"
 }
 
 # Usage/help
 usage() {
-    echo "${GREEN}Usage:${RESET} $0 [-h]"
-    echo "  -h: Show help and sample"
-    echo "${YELLOW}Sample from standard:${RESET}"
-    if [[ ${#loaded_keys[@]} -eq 0 ]]; then
-        load_env_file "$STANDARD_ENV" || echo "No standard loaded."
+    print_message "Usage: $0 [-h]" "$GREEN"
+    print_message "  -h: Show help and sample" "$GREEN"
+    print_message "Sample from standard:" "$YELLOW"
+    if ! load_env_file "$STANDARD_ENV"; then
+        print_message "No standard loaded ($STANDARD_ENV missing)." "$RED"
+        exit 1
     fi
     for key in "${loaded_keys[@]}"; do
         local value="${loaded_values[$key]}"
         local comment="${loaded_comments[$key]}"
-        echo "$key=\"$value\" # $comment"
+        print_message "$key=\"$value\" # $comment" ""
     done
     exit 0
 }
 
 # Main
 main() {
+    mkdir -p "$(dirname "$LOG_FILE")"
     while getopts ":h" opt; do
         case "$opt" in
             h) usage ;;
-            *) echo "${RED}Invalid option: -$opt${RESET}"; usage ;;
+            *) print_message "Invalid option: -$opt" "$RED"; usage ;;
         esac
     done
 
@@ -223,7 +263,7 @@ main() {
 
     # Load standard
     if ! load_env_file "$STANDARD_ENV"; then
-        echo "${RED}FAIL: Standard $STANDARD_ENV missing.${RESET}"
+        print_message "FAIL: Standard $STANDARD_ENV missing." "$RED"
         exit 1
     fi
 
@@ -231,13 +271,18 @@ main() {
     local target_file
     target_file=$(find_target_env)
     if ! load_env_file "$target_file"; then
-        echo "${RED}FAIL: Target $target_file invalid.${RESET}"
+        print_message "FAIL: Target $target_file invalid." "$RED"
         exit 1
     fi
     declare -A target_values
     for key in "${!loaded_values[@]}"; do target_values["$key"]="${loaded_values[$key]}"; done
     declare -A target_comments
     for key in "${!loaded_comments[@]}"; do target_comments["$key"]="${loaded_comments[$key]}"; done
+
+    # Check env_version
+    if [[ "${target_values[ENV_VERSION]-}" != "${loaded_values[ENV_VERSION]-}" ]]; then
+        log_result "WARN" "ENV_VERSION mismatch (target: ${target_values[ENV_VERSION]-}, standard: ${loaded_values[ENV_VERSION]-}). Update to match standard." "E000"
+    fi
 
     # Condition: Warn if few keys
     if [[ ${#target_values[@]} -lt $MIN_KEYS_THRESHOLD ]]; then
@@ -253,9 +298,9 @@ main() {
     done
 
     if $overall_pass; then
-        echo "${GREEN}PASS${RESET}"
+        print_message "PASS" "$GREEN"
     else
-        echo "${RED}FAIL${RESET}"
+        print_message "FAIL" "$RED"
     fi
 }
 

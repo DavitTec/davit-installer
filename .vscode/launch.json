@@ -11,13 +11,27 @@
       "args": []
     },
     {
+      "name": "Debug check-env.sh",
+      "type": "bashdb",
+      "request": "launch",
+      "program": "${workspaceFolder}/scripts/check-env.sh",
+      "cwd": "${workspaceFolder}",
+      "terminalKind": "integrated",
+      "args": []
+    },
+    {
       "name": "Debug create-manifest.sh",
       "type": "bashdb",
       "request": "launch",
       "program": "${workspaceFolder}/scripts/create-manifest.sh",
       "cwd": "${workspaceFolder}",
       "terminalKind": "integrated",
-      "args": ["--update", "--integrate", "--bump", "patch"]  // Example args; edit as needed
+      "args": [
+        "--update",
+        "--integrate",
+        "--bump",
+        "patch"
+      ] // Example args; edit as needed
     },
     {
       "name": "Debug create-env.sh",
@@ -26,7 +40,7 @@
       "program": "${workspaceFolder}/scripts/create-env.sh",
       "cwd": "${workspaceFolder}",
       "terminalKind": "integrated",
-      "args": []  // No args typically needed; add if testing specific inputs
+      "args": [] // No args typically needed; add if testing specific inputs
     },
     {
       "name": "Debug test-install.sh",
@@ -35,7 +49,7 @@
       "program": "${workspaceFolder}/test/test-install.sh",
       "cwd": "${workspaceFolder}",
       "terminalKind": "integrated",
-      "args": []  // Add args if your test script supports them
+      "args": [] // Add args if your test script supports them
     }
   ]
 }

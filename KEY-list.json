@@ -1,0 +1,216 @@
+[
+  {
+    "key": "ENV_VERSION",
+    "type": "string",
+    "required": true,
+    "description": "Environment version code (e.g., '0001')"
+  },
+  {
+    "key": "DOMAIN",
+    "type": "string",
+    "required": true,
+    "description": "Project domain (e.g., 'davit')"
+  },
+  {
+    "key": "HOST",
+    "type": "string",
+    "required": true,
+    "description": "Server hostname (e.g., '$(hostname)')"
+  },
+  {
+    "key": "AUTHOR",
+    "type": "string",
+    "required": false,
+    "description": "Project author (e.g., '$USER')"
+  },
+  {
+    "key": "PROJECT_NAME",
+    "type": "string",
+    "required": true,
+    "description": "Project name (e.g., '$(basename \"$PWD\")')"
+  },
+  {
+    "key": "VERSION",
+    "type": "semver",
+    "required": true,
+    "description": "Semantic version (X.Y.Z)"
+  },
+  {
+    "key": "CREATED",
+    "type": "timestamp",
+    "required": false,
+    "description": "Creation timestamp (e.g., '$(date '+%Y%m%d-%H:%M')')"
+  },
+  {
+    "key": "LAST_VISITED",
+    "type": "timestamp",
+    "required": false,
+    "description": "Last access timestamp (e.g., '$(date '+%Y-%m-%d %H:%M:%S')')"
+  },
+  {
+    "key": "SYNC_LEVEL",
+    "type": "enum",
+    "values": [
+      "patch",
+      "minor",
+      "major"
+    ],
+    "required": true,
+    "description": "Sync level"
+  },
+  {
+    "key": "DIR_NAME",
+    "type": "string",
+    "required": false,
+    "description": "Directory name (alias for PROJECT_NAME, e.g., '$(basename \"$PWD\")')"
+  },
+  {
+    "key": "OPT_DIR",
+    "type": "path",
+    "required": false,
+    "description": "Base opt directory (e.g., '/opt/${DOMAIN}')"
+  },
+  {
+    "key": "BIN_DIR",
+    "type": "path",
+    "required": false,
+    "description": "Bin directory (e.g., '${OPT_DIR}/bin')"
+  },
+  {
+    "key": "DEV_DIR",
+    "type": "path",
+    "required": false,
+    "description": "Development directory (e.g., '${OPT_DIR}/development')"
+  },
+  {
+    "key": "ROOT_DIR",
+    "type": "path",
+    "required": false,
+    "description": "Project root (e.g., '${DEV_DIR}/${PROJECT_NAME}')"
+  },
+  {
+    "key": "ARCHIVES_DIR",
+    "type": "path",
+    "required": false,
+    "description": "Archives directory (e.g., '${ROOT_DIR}/archives')"
+  },
+  {
+    "key": "TEMP_DIR",
+    "type": "path",
+    "required": false,
+    "description": "Temp directory (e.g., '${ROOT_DIR}/tmp/${PROJECT_NAME}')"
+  },
+  {
+    "key": "TEST_DIR",
+    "type": "path",
+    "required": false,
+    "description": "Test directory (e.g., '${ROOT_DIR}/tests/${PROJECT_NAME}.log')"
+  },
+  {
+    "key": "LOG_DIR",
+    "type": "path",
+    "required": false,
+    "description": "Log directory (e.g., '${ROOT_DIR}/logs')"
+  },
+  {
+    "key": "LOG_FILE",
+    "type": "path",
+    "required": false,
+    "description": "Log file (e.g., '${LOG_DIR}/${PROJECT_NAME}.log')"
+  },
+  {
+    "key": "REQUIREMENTS",
+    "type": "boolean",
+    "required": false,
+    "description": "Check requirements (true/false)"
+  },
+  {
+    "key": "SERVER",
+    "type": "string",
+    "required": false,
+    "description": "Server name (alias for HOST, e.g., '${HOST}')"
+  },
+  {
+    "key": "GIT_ENABLED",
+    "type": "boolean",
+    "required": false,
+    "description": "Enable Git (true/false)"
+  },
+  {
+    "key": "GIT_TYPE",
+    "type": "enum",
+    "values": [
+      "github",
+      "gitlab",
+      "bitbucket"
+    ],
+    "required": false,
+    "description": "Git provider"
+  },
+  {
+    "key": "GIT_USER",
+    "type": "string",
+    "required": false,
+    "description": "Git username (e.g., 'DavitTec')"
+  },
+  {
+    "key": "GIT_IGNORE_TEMPLATE",
+    "type": "string",
+    "required": false,
+    "description": "Gitignore templates (e.g., 'node+shell+davit')"
+  },
+  {
+    "key": "GIT_IGNORE_FILE",
+    "type": "string",
+    "required": false,
+    "description": "Gitignore file name (e.g., '.gitignore')"
+  },
+  {
+    "key": "GITHUB_USER",
+    "type": "string",
+    "required": false,
+    "description": "GitHub username (e.g., '${GIT_USER}')"
+  },
+  {
+    "key": "GITHUB_URL",
+    "type": "string",
+    "required": false,
+    "description": "GitHub repo URL (e.g., 'https://github.com/${GITHUB_USER}/${PROJECT_NAME}')"
+  },
+  {
+    "key": "GITHUB_TOKEN",
+    "type": "string",
+    "required": false,
+    "description": "GitHub token (ghp_xxx or empty)"
+  },
+  {
+    "key": "DIFF_TOOL",
+    "type": "string",
+    "required": false,
+    "description": "Diff tool (e.g., 'diff')"
+  },
+  {
+    "key": "VISUAL_DIFF",
+    "type": "string",
+    "required": false,
+    "description": "Visual diff tool (e.g., 'meld')"
+  },
+  {
+    "key": "EXCLUDE_PATTERNS",
+    "type": "string",
+    "required": false,
+    "description": "Exclude patterns for utils"
+  },
+  {
+    "key": "EXCLUDE_EXTENSIONS",
+    "type": "string",
+    "required": false,
+    "description": "Exclude file extensions"
+  },
+  {
+    "key": "INCLUDE_EXTENSIONS",
+    "type": "string",
+    "required": false,
+    "description": "Include file extensions"
+  }
+]
