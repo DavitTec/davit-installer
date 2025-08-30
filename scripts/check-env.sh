@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # check-env.sh
-# Version: 0.0.6
+# Version: 0.0.7
 # Description: Modular .env validator comparing target to standard, with per-key tests and logging.
 # Alias: chkenv, checkenv
 
@@ -30,6 +30,7 @@ fi
 print_message() {
     local message="$1"
     local color="$2"
+    mkdir -p "$(dirname "$LOG_FILE")"
     if $USE_COLORS; then
         printf "%b%s%b\n" "$color" "$message" "$RESET"
     else
@@ -65,7 +66,7 @@ load_env_file() {
         line="${line%"${line##*[![:space:]]}"}"
         if [[ -z "$line" || "$line" =~ ^# ]]; then continue; fi
 
-        if [[ "$line" =~ ^([a-zA-Z_][a-zA-Z0-9_]*)\s*=\s*(\"[^\"]*\"|\'[^\']*\'|[^#]*)(.*)$ ]]; then
+        if [[ "$line" =~ ^([a-zA-Z_][a-zA-Z0-9_]*)\s*=\s*(\"[^\"]*\"|\'[^\']*\'|[^[:space:]#]*)([[:space:]]*#.*)?$ ]]; then
             local key="${BASH_REMATCH[1]}"
             local value="${BASH_REMATCH[2]}"
             local comment="${BASH_REMATCH[3]}"
@@ -121,7 +122,25 @@ get_validation_rules() {
         else
             values="none"
         fi
-        echo "$required $type $values $min_length $error_code $help_comment $regex $default"
+        if [[ "$required" == "null" || "$type" == "null" || "$error_code" == "null" ]]; then
+            print_message "Warning: Failed to parse $REQUIREMENTS_YAML for $key. Using dummy rules." "$YELLOW"
+            case "$key" in
+                ENV_VERSION) echo "true string none 0 E000 Environment version code (e.g., '0001') ^[0-9]{4}$ ''";;
+                DOMAIN) echo "true string none 3 E001 Project domain (e.g., davit) '' ''";;
+                HOST) echo "true string none 4 E002 Server hostname (e.g., node) '' ''";;
+                PROJECT_NAME) echo "true string none 5 E003 Project name (must match folder) '' ''";;
+                VERSION) echo "true semver none 0 E004 Semantic version (X.Y.Z) '' ''";;
+                REQUIREMENTS) echo "false boolean none 0 E012 Check requirements (true/false, optional default true) '' true";;
+                GIT_ENABLED) echo "false boolean none 0 E013 Enable Git (true/false, optional default false) '' false";;
+                SYNC_LEVEL) echo "true enum patch minor major 0 E007 Sync level '' ''";;
+                OPT_DIR) echo "false path none 0 E014 Base opt directory (e.g., /opt/davit) '' ''";;
+                BIN_DIR) echo "false path none 0 E015 Bin directory '' ''";;
+                GITHUB_TOKEN) echo "false string none 0 E010 GitHub access token (or empty) ^ghp_[a-zA-Z0-9]{36}$|^$ ''";;
+                *) echo "false string none 0 E999 Unknown key - consider if needed '' ''";;
+            esac
+        else
+            echo "$required $type $values $min_length $error_code $help_comment $regex $default"
+        fi
     else
         case "$key" in
             ENV_VERSION) echo "true string none 0 E000 Environment version code (e.g., '0001') ^[0-9]{4}$ ''";;
@@ -171,9 +190,11 @@ test_key() {
                     result="FAIL"
                     message+="Value too short (min $min_length). "
                 fi
-                if [[ -n "$regex" && ! "$tgt_value" =~ $regex ]]; then
-                    result="FAIL"
-                    message+="Invalid format (must match $regex). "
+                if [[ -n "$regex" ]]; then
+                    if ! echo "$tgt_value" | grep -qE "$regex"; then
+                        result="FAIL"
+                        message+="Invalid format (must match $regex). "
+                    fi
                 fi
                 ;;
             semver)
