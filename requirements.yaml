@@ -8,9 +8,9 @@ extensions:
   - knisterpeter.vscode-commitizen
   - mhutchie.git-graph
   - rogalmic.bash-debug
-  -gruntfuggly.todo-tree
+  - gruntfuggly.todo-tree
 settings:
-  editor.formatOnSave: true
+  editors.formatOnSave: true
   prettier.enable: true
   eslint.enable: true
   eslint.validate: ["javascript", "typescript"]
@@ -33,32 +33,43 @@ dependencies:
   - jq
   - git
 validation_rules:
-  version: "^[0-9]+\\.[0-9]+\\.[0-9]+$"
-  description_min_length: 10
-  boolean_values: ["true", "false"]
   DOMAIN:
+    required: true
     type: string
     min_length: 3
-    required: true
+    error_code: E001
+    help_comment: "Project domain (e.g., 'davit')"
   HOST:
+    required: true
     type: string
     min_length: 4
-    required: true
+    error_code: E002
+    help_comment: "Server hostname (e.g., 'node')"
   PROJECT_NAME:
+    required: true
     type: string
     min_length: 5
-    required: true
+    error_code: E003
+    help_comment: "Project name (must match folder)"
   VERSION:
+    required: true
     type: semver
-    required: true
+    error_code: E004
+    help_comment: "Semantic version (X.Y.Z)"
   REQUIREMENTS:
+    required: false
     type: boolean
-    required: true
+    error_code: E012
+    help_comment: "Check requirements (true/false, optional default true)"
   GIT_ENABLED:
+    required: false
     type: boolean
-    required: true
+    error_code: E013
+    help_comment: "Enable Git (true/false, optional default false)"
   SYNC_LEVEL:
-    type: enum
-    values: [patch, minor, major]
     required: true
+    type: enum
+    values: ["patch", "minor", "major"]
+    error_code: E007
+    help_comment: "Sync level"
   # Add more keys as needed (e.g., env_version: type: semver, required: true)
