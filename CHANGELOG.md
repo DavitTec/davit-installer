@@ -1,20 +1,26 @@
 # Changelog
+
 All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 All notable changes to the [davit-installer](https://github.com/DavitTec/davit-installer) project will be documented in this file.
+
 - GitHub: [https://github.com/DavitTec/davit-installer](https://github.com/DavitTec/davit-installer),
 
 ---
+
 ## [unreleased]
 
 ### ⚙️ Miscellaneous Tasks
 
 - Testing add FIXME: bug report  "create-env.sh" (822e952…)
 
-
 ### 🐛 Bug Fixes
+
+- Renamed key-list.json (e36540d…)
+
+- Check-env.sh: 0.0.7 (df98704…)
 
 - Imporved check-env.sh v0.0.3 (2c61d2c…)
 
@@ -28,8 +34,9 @@ All notable changes to the [davit-installer](https://github.com/DavitTec/davit-i
 
 - Update gitignore (fe1711a…)
 
-
 ### 📚 Documentation
+
+- Update readme and changelog to v0.0.6 (ac580ad…)
 
 - Updated README (880ea14…)
 
@@ -39,15 +46,17 @@ All notable changes to the [davit-installer](https://github.com/DavitTec/davit-i
 
 - Update changelog (295d774…)
 
-
 ### 🚀 Features
+
+- Add symlink to .env-standard (da84d72…)
+
+- Add markdownlint to requirements and sha code (2de3ea0…)
 
 - Updated debuging scripts and launch.json (0578d6f…)
 
 - Added todo ext to vscode (5ac5dd8…)
 
 - Update requirements with TODO ext (650dc49…)
-
 
 ### 🧪 Testing
 
@@ -63,11 +72,9 @@ All notable changes to the [davit-installer](https://github.com/DavitTec/davit-i
 
 - Updated cliff.toml to this project (b00e802…)
 
-
 ### 📚 Documentation
 
 - Update (d74c35b…)
-
 
 ### 🚀 Features
 
@@ -80,5 +87,3 @@ All notable changes to the [davit-installer](https://github.com/DavitTec/davit-i
 - Add .env-example (2c2ab3c…)
 
 - Add create-env.sh helper (c57e7e9…)
-
-

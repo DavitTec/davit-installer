@@ -4,7 +4,7 @@
 
 `davit-installer` is a production-ready installer for DAVIT projects, adding `INSTALL` commands to projects or running via alias `install+` from `/opt/davit/bin`. It manages environment setup, manifest generation, and validation, ensuring consistency across projects under `/opt/davit/development`. Version 0.0.6 stabilizes .env handling with strict naming and color output fixes.
 
-- **Version**: 0.0.6 (bump patches per commit; use `./scripts/create-manifest.sh --bump patch`)
+- **Version**: 0.0.8 (bump patches per commit; use `./scripts/create-manifest.sh --bump patch`)
 - **Branch**: patch/v0.0.2-fixes (merge to main after stabilization)
 - **GitHub**: https://github.com/DavitTec/davit-installer
 - **Changelog**: See CHANGELOG.md for features, fixes, and docs updates.
@@ -94,7 +94,7 @@ sha256sum requirements.yaml > .vscode/requirements.sha256
 
 - **.env-standard** (in /opt/davit/development): Global template with expressions.
 - **requirements.yaml**: Defines validation_rules for required/optional keys, types, min_length, regex, defaults.
-- **KEY-list.json**: Full list of possible keys for reference/generation.
+- **key-list.json**: Full list of possible keys for reference/generation.
 
 ## Suggestions and Recommendations
 
@@ -114,7 +114,7 @@ sha256sum requirements.yaml > .vscode/requirements.sha256
 ## TODOs (from docs/todo.md)
 
 - Fix create-env.sh for generic generation.
-- Add more keys to KEY-list.json as projects evolve.
+- Add more keys to key-list.json as projects evolve.
 - Integrate check-env.sh into create-manifest.sh.
 
 For questions, open GitHub issue.
@@ -122,6 +122,70 @@ For questions, open GitHub issue.
 ## Installation
 
 Run `./INSTALL` or global `/opt/davit/bin/INSTALL --project <name>`.
+
+### Project Creation Procedure
+
+1. Create Directory:
+
+- Path: `/opt/davit/development/<project-name>` (lowercase, dashes).
+- `mkdir /opt/davit/development/new-project`
+
+2. Initialize Git:
+
+   ```bash
+     cd /opt/davit/development/new-project
+     git init
+     git remote add origin https://github.com/DavitTec/new-project
+   ```
+
+3. Copy Templates:
+
+- cp `/opt/davit/development/.env-standard .env-example`
+- `./scripts/create-env.sh` (fix pending).
+- Copy `requirements.yaml`, `key-list.json`, `.vscode/`.
+
+4. Setup VSCode:
+
+- `/opt/davit/bin/vscode.sh -p "$(pwd)"`
+
+5. Create Files:
+
+- Use scripts/helpers/create_script.sh for scripts:
+
+  ```bash
+  #!/usr/bin/env bash
+  # <script-name>.sh
+  # Version: 0.0.1
+  # Description: <description>
+  # Alias: <alias>
+  ```
+
+Initialize README.md, CHANGELOG.md, .gitignore.
+
+6. Validate and Commit:
+
+- ./scripts/check-env.sh
+
+```bash
+  git add . && git commit -m "chore: initialize project"
+  git push origin main
+```
+
+7. Archive:
+
+- bashmkdir -p archives/v0.0.1
+- rsync -av --exclude 'archives/_' --exclude 'logs/_' --exclude 'tmp/\*' . archives/v0.0.1/
+
+# Scripts
+
+- check-env.sh: Validates .env (v0.0.8).
+- create-env.sh: Generates .env (broken, v0.0.2).
+- create-manifest.sh: Generates manifest.json (v0.0.5).
+- test-install.sh: Tests setup (v0.0.2).
+- davit-installer.sh: Main installer (alias install+).
+- helpers/create_script.sh: Creates scripts.
+- vscode.sh: Sets up VSCode (v0.0.1).
+- pre-setup.sh: Initializes projects (v0.0.1).
 
 ## Usage
 
