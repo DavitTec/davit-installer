@@ -1,20 +1,20 @@
 # Changelog
 
-All notable changes to this project will be documented in this file.
+All notable changes to the ["https://github.com/DavitTec/davit-installer"](https://github.com/DavitTec/davit-installer) project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
-All notable changes to the [davit-installer](https://github.com/DavitTec/davit-installer) project will be documented in this file.
 
-- GitHub: [https://github.com/DavitTec/davit-installer](https://github.com/DavitTec/davit-installer),
-
----
-
-## [unreleased]
+## [0.0.9] - 2025-10-11 ([v0.0.9](https://github.com/DavitTec/davit-installer/releases/tag/v0.0.9))
 
 ### ⚙️ Miscellaneous Tasks
 
+- Refactor create-manifest test-install.sh (1bb7d73…)
+
+- Removed cliff test/  create-manifest.sh (bf5332b…)
+
 - Testing add FIXME: bug report  "create-env.sh" (822e952…)
+
 
 ### 🐛 Bug Fixes
 
@@ -34,7 +34,10 @@ All notable changes to the [davit-installer](https://github.com/DavitTec/davit-i
 
 - Update gitignore (fe1711a…)
 
+
 ### 📚 Documentation
+
+- Update docs to 0.0.8 (51dced1…)
 
 - Update readme and changelog to v0.0.6 (ac580ad…)
 
@@ -46,7 +49,10 @@ All notable changes to the [davit-installer](https://github.com/DavitTec/davit-i
 
 - Update changelog (295d774…)
 
+
 ### 🚀 Features
+
+- Update requirements configs (4e97acc…)
 
 - Add symlink to .env-standard (da84d72…)
 
@@ -57,6 +63,7 @@ All notable changes to the [davit-installer](https://github.com/DavitTec/davit-i
 - Added todo ext to vscode (5ac5dd8…)
 
 - Update requirements with TODO ext (650dc49…)
+
 
 ### 🧪 Testing
 
@@ -72,9 +79,11 @@ All notable changes to the [davit-installer](https://github.com/DavitTec/davit-i
 
 - Updated cliff.toml to this project (b00e802…)
 
+
 ### 📚 Documentation
 
 - Update (d74c35b…)
+
 
 ### 🚀 Features
 
@@ -87,3 +96,5 @@ All notable changes to the [davit-installer](https://github.com/DavitTec/davit-i
 - Add .env-example (2c2ab3c…)
 
 - Add create-env.sh helper (c57e7e9…)
+
+
