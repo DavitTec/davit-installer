@@ -10,8 +10,12 @@ extensions:
   - rogalmic.bash-debug
   - gruntfuggly.todo-tree
   - davidanson.vscode-markdownlint
+  - bpruitt-goddard.mermaid-markdown-syntax-highlighting
+  - vstirbu.vscode-mermaid-preview
+  - jebbs.markdown-extended
+  - tyriar.sort-lines
 settings:
-  editors.formatOnSave: true
+  editor.formatOnSave: true
   prettier.enable: true
   eslint.enable: true
   eslint.validate: ["javascript", "typescript"]
@@ -21,6 +25,8 @@ settings:
   commitizen.path: "cz-conventional-changelog"
   debug.node.autoAttach: "on"
   tasks.runners: ["pnpm run parallel"]
+  shellcheck.customArgs: ["-x"]
+  "[shellscript]": { "editor.defaultFormatter": "foxundermoon.shell-format" }
 launch:
   configurations:
     - name: Debug vscode.sh
