@@ -1,0 +1,1 @@
+/opt/davit/development/manifest/scripts/create-manifest.sh
